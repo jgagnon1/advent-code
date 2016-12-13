@@ -11,15 +11,17 @@ object Day2 extends App {
   val lines = source.map(_.toCharArray).toSeq
 
   def findCode(keypad: Seq[Seq[Option[String]]], initial: Point): String = {
-    val codes = lines.foldLeft(List(Point(1, 1))) { case (xs@prev :: _, line) =>
-      val next = line.foldLeft(prev) {
-        case (p@Point(x, y), 'U') if keypad.isDefinedAt(y - 1) && keypad(y - 1)(x).isDefined => p.copy(y = y - 1)
-        case (p@Point(x, y), 'D') if keypad.isDefinedAt(y + 1) && keypad(y + 1)(x).isDefined => p.copy(y = y + 1)
-        case (p@Point(x, y), 'R') if keypad(y).isDefinedAt(x + 1) && keypad(y)(x + 1).isDefined => p.copy(x = x + 1)
-        case (p@Point(x, y), 'L') if keypad(y).isDefinedAt(x - 1) && keypad(y)(x - 1).isDefined => p.copy(x = x - 1)
-        case (p, m) => p
-      }
-      next :: xs
+    val codes = lines.foldLeft(List(Point(1, 1))) {
+      case (xs@prev :: _, line) =>
+        val next = line.foldLeft(prev) {
+          case (p@Point(x, y), 'U') if keypad.isDefinedAt(y - 1) && keypad(y - 1)(x).isDefined => p.copy(y = y - 1)
+          case (p@Point(x, y), 'D') if keypad.isDefinedAt(y + 1) && keypad(y + 1)(x).isDefined => p.copy(y = y + 1)
+          case (p@Point(x, y), 'R') if keypad(y).isDefinedAt(x + 1) && keypad(y)(x + 1).isDefined => p.copy(x = x + 1)
+          case (p@Point(x, y), 'L') if keypad(y).isDefinedAt(x - 1) && keypad(y)(x - 1).isDefined => p.copy(x = x - 1)
+          case (p, m) => p
+        }
+        next :: xs
+      case (Nil, _) => throw new IllegalArgumentException("Starting point required")
     }
 
     codes.init.reverse.flatMap(p => keypad(p.y)(p.x)).mkString("")

@@ -39,9 +39,8 @@ final case class Room(name: String, sectorId: Int, checksum: String) {
     val top = name
       .replaceAll("-", "")
       .groupBy(identity)
-      .map { case ((k,v)) => (k, v.length) }
       .toSeq
-      .sortBy(t => (-t._2, t._1))
+      .sortBy(t => (-t._2.length, t._1))
       .take(5).map(_._1)
 
     top.forall(checksum.toCharArray.contains)
